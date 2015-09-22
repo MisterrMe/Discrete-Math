@@ -1,0 +1,113 @@
+
+#include <iostream>
+#include "stdio.h"
+#include <stdlib.h>
+#include "conio.h"
+
+int main()
+{
+	//Задаем локализацию
+	setlocale (LC_ALL,"rus");
+
+	//Задаем параметры
+	FILE *file1;
+	file1 = fopen("Datafiles\\in.txt", "r");
+	char buffer[1500];
+	char sbuffer[100];
+	int i=0,j=0,k=0,l=0;
+	float a[3][3];
+	float b[3];
+	float c[3];
+
+	//проверка считывания файла
+	if (file1 == NULL) 
+	{
+		printf("Файл не считался. мать твою.что за дерьмо. я не е*у почему он считался.\nГори в аду п*дрила е*аный. рукожоп корявый.\n");
+		_getch();
+		return -1;
+	}
+
+	//запись данных из файла в переменные
+	fgets(buffer, sizeof(buffer), file1);
+
+	//запись массива С
+	fgets(buffer, sizeof(buffer), file1);
+	for (i=0;i<1000;i++)
+	{
+		k=0;
+		if (buffer[i]==32 && buffer[i+1]!=32 && j!=3)
+		{
+			while(1)
+			{
+				i+=1;
+				sbuffer[k]=buffer[i];
+				k+=1;
+				if (buffer[i+1]==32 || buffer[i+1]==93)
+				{
+					c[j]=atof(sbuffer);
+					j+=1;
+					break;
+				}
+			}
+		}
+	}
+
+	//Запись массива A
+	i=0;j=0;k=0;l=0;
+	fgets(buffer, sizeof(buffer), file1);
+	fgets(buffer, sizeof(buffer), file1);
+	for (i=0;i<1000;i++)
+	{
+		k=0;
+		if (buffer[i]==32 && buffer[i+1]!=32 && buffer[i+1]!=91 && j!=3)
+		{
+			while(1)
+			{
+				i+=1;
+				sbuffer[k]=buffer[i];
+				k+=1;
+				if (buffer[i+1]==32 || buffer[i+1]==93)
+				{
+					a[l][j]=atof(sbuffer);
+					j+=1;
+					break;
+				}
+			}
+		}
+		if (j==3 && l!=2)
+		{
+			l+=1;
+			i=-1;
+			j=0;
+			fgets(buffer, sizeof(buffer), file1);
+		}
+	}
+
+	//запись массива B
+	i=0;j=0;k=0;l=0;
+	fgets(buffer, sizeof(buffer), file1);
+	fgets(buffer, sizeof(buffer), file1);
+	for (i=0;i<1000;i++)
+	{
+		k=0;
+		if (buffer[i]==32 && buffer[i+1]!=32 && j!=3)
+		{
+			while(1)
+			{
+				i+=1;
+				sbuffer[k]=buffer[i];
+				k+=1;
+				if (buffer[i+1]==32 || buffer[i+1]==93)
+				{
+					b[j]=atof(sbuffer);
+					j+=1;
+					break;
+				}
+			}
+		}
+	}
+
+	//математические рассчеты
+
+	getch();
+}
