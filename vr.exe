@@ -1,8 +1,80 @@
-
 #include <iostream>
 #include "stdio.h"
 #include <stdlib.h>
 #include "conio.h"
+
+float a[3][3];
+float b[3];
+float c[3];
+int xi[3]={1,2,3},xj[3]={4,5,6};
+
+void change(int i,int k)
+{
+	int buf=xj[k];
+	xj[k]=xi[i];
+	xi[i]=buf;
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l!=i && j!=k)
+				a[l][j]=a[l][j]-(a[l][k]*a[i][j]/a[i][k]);
+		}
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l==i && j!=k)
+				a[l][j]=a[l][j]/a[i][k];
+		}
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l!=i && j==k)
+				a[l][j]=-a[l][j]/a[i][k];
+		}
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l==i && j==k)
+				a[l][j]=1/a[i][k];
+		}
+	}
+}
+
+void optimal()
+{
+	int k;
+	for ( int i = 0; i < 3; i++)
+	{
+		if (c[i]>=0)
+		{
+			int min=100;
+			for ( int j = 0; j < 3; j++)
+			{
+				if (a[i][j]==0)
+					continue;
+				if (b[i]/a[i][j] < min)
+				{
+					k=i;
+					min=b[i]/a[i][j];
+				}
+			}
+			printf("Разрешающая строка %d. Разрешающий столбец %d.\n",i,k);
+			change(i,k);
+		}
+		k=0;
+	}
+}
 
 int main()
 {
@@ -12,17 +84,16 @@ int main()
 	//Задаем параметры
 	FILE *file1;
 	file1 = fopen("Datafiles\\in.txt", "r");
+	//Буфер считывания
 	char buffer[1500];
 	char sbuffer[100];
+	//счетчики
 	int i=0,j=0,k=0,l=0;
-	float a[3][3];
-	float b[3];
-	float c[3];
 
 	//проверка считывания файла
 	if (file1 == NULL) 
 	{
-		printf("Файл не считался. мать твою.что за дерьмо. я не е*у почему он считался.\nГори в аду п*дрила е*аный. рукожоп корявый.\n");
+		printf("Файл не считался.\n");
 		_getch();
 		return -1;
 	}
@@ -108,6 +179,7 @@ int main()
 	}
 
 	//математические рассчеты
+	optimal();
 
 	getch();
 }
