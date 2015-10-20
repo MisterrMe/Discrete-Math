@@ -1,0 +1,214 @@
+#include <iostream>
+#include "stdio.h"
+#include <stdlib.h>
+#include "conio.h"
+
+float a[3][3];
+float b[3];
+float c[3];
+float d=0;
+int xi[3]={1,2,3},xj[3]={4,5,6};
+
+void print()
+{
+	printf("%d %d %d %d.\n",b[0],a[0][0],a[0][1],a[0][2]);
+	printf("%d %d %d %d.\n",b[1],a[1][0],a[1][1],a[1][2]);
+	printf("%d %d %d %d.\n",b[2],a[2][0],a[2][1],a[2][2]);
+	printf("%d %d %d %d.\n",d,c[0],c[1],c[2]);
+}
+
+void change(int i,int k)
+{
+	int buf=xj[k];
+	xj[k]=xi[i];
+	xi[i]=buf;
+
+	d = d-b[i]*c[k]/a[i][k];
+
+	for ( int l = 0; l < 3; l++)
+	{
+		if ( l == i)
+			b[l]=b[l]/a[i][k];
+		else
+			b[l]=b[l]-a[l][k]*b[i]/a[i][k];
+		
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		if ( l == i)
+			c[l]=-c[l]/a[i][k];
+		else
+			c[l]=c[l]-a[i][l]*c[i]/a[i][k];
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l!=i && j!=k)
+				a[l][j]=a[l][j]-(a[l][k]*a[i][j]/a[i][k]);
+		}
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l==i && j!=k)
+				a[l][j]=a[l][j]/a[i][k];
+		}
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l!=i && j==k)
+				a[l][j]=-a[l][j]/a[i][k];
+		}
+	}
+
+	for ( int l = 0; l < 3; l++)
+	{
+		for ( int j = 0; j < 3; j++)
+		{
+			if (l==i && j==k)
+				a[l][j]=1/a[i][k];
+		}
+	}
+}
+
+void optimal()
+{
+	int k;
+	for ( int i = 0; i < 3; i++)
+	{
+		if (c[i]>=0)
+		{
+			int min=100;
+			for ( int j = 0; j < 3; j++)
+			{
+				if (a[i][j]==0)
+					continue;
+				if (b[i]/a[i][j] < min)
+				{
+					k=i;
+					min=b[i]/a[i][j];
+				}
+			}
+			printf("Разрешающая строка %d. Разрешающий столбец %d.\n",i,k);
+			change(i,k);
+			print();
+		}
+		k=0;
+	}
+}
+
+int main()
+{
+	//Задаем локализацию
+	setlocale (LC_ALL,"rus");
+
+	//Задаем параметры
+	FILE *file1;
+	file1 = fopen("Datafiles\\in.txt", "r");
+	//Буфер считывания
+	char buffer[1500];
+	char sbuffer[100];
+	//счетчики
+	int i=0,j=0,k=0,l=0;
+
+	//проверка считывания файла
+	if (file1 == NULL) 
+	{
+		printf("Файл не считался.\n");
+		_getch();
+		return -1;
+	}
+
+	//запись данных из файла в переменные
+	fgets(buffer, sizeof(buffer), file1);
+
+	//запись массива С
+	fgets(buffer, sizeof(buffer), file1);
+	for (i=0;i<1000;i++)
+	{
+		k=0;
+		if (buffer[i]==32 && buffer[i+1]!=32 && j!=3)
+		{
+			while(1)
+			{
+				i+=1;
+				sbuffer[k]=buffer[i];
+				k+=1;
+				if (buffer[i+1]==32 || buffer[i+1]==93)
+				{
+					c[j]=atof(sbuffer);
+					j+=1;
+					break;
+				}
+			}
+		}
+	}
+
+	//Запись массива A
+	i=0;j=0;k=0;l=0;
+	fgets(buffer, sizeof(buffer), file1);
+	fgets(buffer, sizeof(buffer), file1);
+	for (i=0;i<1000;i++)
+	{
+		k=0;
+		if (buffer[i]==32 && buffer[i+1]!=32 && buffer[i+1]!=91 && j!=3)
+		{
+			while(1)
+			{
+				i+=1;
+				sbuffer[k]=buffer[i];
+				k+=1;
+				if (buffer[i+1]==32 || buffer[i+1]==93)
+				{
+					a[l][j]=atof(sbuffer);
+					j+=1;
+					break;
+				}
+			}
+		}
+		if (j==3 && l!=2)
+		{
+			l+=1;
+			i=-1;
+			j=0;
+			fgets(buffer, sizeof(buffer), file1);
+		}
+	}
+
+	//запись массива B
+	i=0;j=0;k=0;l=0;
+	fgets(buffer, sizeof(buffer), file1);
+	fgets(buffer, sizeof(buffer), file1);
+	for (i=0;i<1000;i++)
+	{
+		k=0;
+		if (buffer[i]==32 && buffer[i+1]!=32 && j!=3)
+		{
+			while(1)
+			{
+				i+=1;
+				sbuffer[k]=buffer[i];
+				k+=1;
+				if (buffer[i+1]==32 || buffer[i+1]==93)
+				{
+					b[j]=atof(sbuffer);
+					j+=1;
+					break;
+				}
+			}
+		}
+	}
+
+	//математические рассчеты
+	optimal();
+
+	getch();
+}
