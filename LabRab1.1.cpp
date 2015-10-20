@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <iostream>
 #include "stdio.h"
 #include <stdlib.h>
@@ -207,6 +208,24 @@ int main()
 		}
 	}
 
+	//проверка переменных
+	float aa[3][3];
+	float bb[3];
+	float cc[3];
+	for ( int l = 0 ; l < 3 ; l++)
+	{
+		for ( int k = 0 ; k < 3; k++)
+		{
+			aa[l][k]=a[l][k];
+		}
+	}
+	for ( int l = 0 ; l < 3 ; l++)
+	{
+		bb[l]=b[l];
+		cc[l]=c[l];
+	}
+
+	print();
 	//математические рассчеты
 	optimal();
 
