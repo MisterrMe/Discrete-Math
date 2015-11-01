@@ -1,115 +1,13 @@
-#include "stdafx.h"
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include "stdio.h"
 #include <stdlib.h>
 #include "conio.h"
 
-float a[3][3];
-float b[3];
-float c[3];
-float d=0;
-int xi[3]={1,2,3},xj[3]={4,5,6};
-
-void print()
-{
-	printf("%d %d %d %d.\n",b[0],a[0][0],a[0][1],a[0][2]);
-	printf("%d %d %d %d.\n",b[1],a[1][0],a[1][1],a[1][2]);
-	printf("%d %d %d %d.\n",b[2],a[2][0],a[2][1],a[2][2]);
-	printf("%d %d %d %d.\n",d,c[0],c[1],c[2]);
-}
-
-void change(int i,int k)
-{
-	int buf=xj[k];
-	xj[k]=xi[i];
-	xi[i]=buf;
-
-	d = d-b[i]*c[k]/a[i][k];
-
-	for ( int l = 0; l < 3; l++)
-	{
-		if ( l == i)
-			b[l]=b[l]/a[i][k];
-		else
-			b[l]=b[l]-a[l][k]*b[i]/a[i][k];
-		
-	}
-
-	for ( int l = 0; l < 3; l++)
-	{
-		if ( l == i)
-			c[l]=-c[l]/a[i][k];
-		else
-			c[l]=c[l]-a[i][l]*c[i]/a[i][k];
-	}
-
-	for ( int l = 0; l < 3; l++)
-	{
-		for ( int j = 0; j < 3; j++)
-		{
-			if (l!=i && j!=k)
-				a[l][j]=a[l][j]-(a[l][k]*a[i][j]/a[i][k]);
-		}
-	}
-
-	for ( int l = 0; l < 3; l++)
-	{
-		for ( int j = 0; j < 3; j++)
-		{
-			if (l==i && j!=k)
-				a[l][j]=a[l][j]/a[i][k];
-		}
-	}
-
-	for ( int l = 0; l < 3; l++)
-	{
-		for ( int j = 0; j < 3; j++)
-		{
-			if (l!=i && j==k)
-				a[l][j]=-a[l][j]/a[i][k];
-		}
-	}
-
-	for ( int l = 0; l < 3; l++)
-	{
-		for ( int j = 0; j < 3; j++)
-		{
-			if (l==i && j==k)
-				a[l][j]=1/a[i][k];
-		}
-	}
-}
-
-void optimal()
-{
-	int k;
-	for ( int i = 0; i < 3; i++)
-	{
-		if (c[i]>=0)
-		{
-			int min=100;
-			for ( int j = 0; j < 3; j++)
-			{
-				if (a[i][j]==0)
-					continue;
-				if (b[i]/a[i][j] < min)
-				{
-					k=i;
-					min=b[i]/a[i][j];
-				}
-			}
-			printf("Разрешающая строка %d. Разрешающий столбец %d.\n",i,k);
-			change(i,k);
-			print();
-		}
-		k=0;
-	}
-}
-
 int main()
 {
 	//Задаем локализацию
-	setlocale (LC_ALL,"rus");
+	setlocale(LC_ALL, "rus");
 
 	//Задаем параметры
 	FILE *file1;
@@ -117,11 +15,17 @@ int main()
 	//Буфер считывания
 	char buffer[1500];
 	char sbuffer[100];
+	//Переменные
+	float a[3][3];
+	float b[3];
+	float c[3];
+	float d = 0;
+	int xi[3] = { 1, 2, 3 }, xj[3] = { 4, 5, 6 };
 	//счетчики
-	int i=0,j=0,k=0,l=0;
+	int i = 0, j = 0, k = 0, l = 0;
 
 	//проверка считывания файла
-	if (file1 == NULL) 
+	if (file1 == NULL)
 	{
 		printf("Файл не считался.\n");
 		_getch();
@@ -133,101 +37,196 @@ int main()
 
 	//запись массива С
 	fgets(buffer, sizeof(buffer), file1);
-	for (i=0;i<1000;i++)
+	for (i = 0; i<1000; i++)
 	{
-		k=0;
-		if (buffer[i]==32 && buffer[i+1]!=32 && j!=3)
+		k = 0;
+		if (buffer[i] == 32 && buffer[i + 1] != 32 && j != 3)
 		{
-			while(1)
+			while (1)
 			{
-				i+=1;
-				sbuffer[k]=buffer[i];
-				k+=1;
-				if (buffer[i+1]==32 || buffer[i+1]==93)
+				i += 1;
+				sbuffer[k] = buffer[i];
+				k += 1;
+				if (buffer[i + 1] == 32 || buffer[i + 1] == 93)
 				{
-					c[j]=atof(sbuffer);
-					j+=1;
+					c[j] = -atof(sbuffer);
+					j += 1;
 					break;
 				}
 			}
 		}
 	}
+	//конец записи массива С
 
 	//Запись массива A
-	i=0;j=0;k=0;l=0;
+	i = 0; j = 0; k = 0; l = 0;
 	fgets(buffer, sizeof(buffer), file1);
 	fgets(buffer, sizeof(buffer), file1);
-	for (i=0;i<1000;i++)
+	for (i = 0; i<1000; i++)
 	{
-		k=0;
-		if (buffer[i]==32 && buffer[i+1]!=32 && buffer[i+1]!=91 && j!=3)
+		k = 0;
+		if (buffer[i] == 32 && buffer[i + 1] != 32 && buffer[i + 1] != 91 && j != 3)
 		{
-			while(1)
+			while (1)
 			{
-				i+=1;
-				sbuffer[k]=buffer[i];
-				k+=1;
-				if (buffer[i+1]==32 || buffer[i+1]==93)
+				i += 1;
+				sbuffer[k] = buffer[i];
+				k += 1;
+				if (buffer[i + 1] == 32 || buffer[i + 1] == 93)
 				{
-					a[l][j]=atof(sbuffer);
-					j+=1;
+					a[l][j] = atof(sbuffer);
+					j += 1;
 					break;
 				}
 			}
 		}
-		if (j==3 && l!=2)
+		if (j == 3 && l != 2)
 		{
-			l+=1;
-			i=-1;
-			j=0;
+			l += 1;
+			i = -1;
+			j = 0;
 			fgets(buffer, sizeof(buffer), file1);
 		}
 	}
+	//конец записи массива А
 
 	//запись массива B
-	i=0;j=0;k=0;l=0;
+	i = 0; j = 0; k = 0; l = 0;
 	fgets(buffer, sizeof(buffer), file1);
 	fgets(buffer, sizeof(buffer), file1);
-	for (i=0;i<1000;i++)
+	for (i = 0; i<1000; i++)
 	{
-		k=0;
-		if (buffer[i]==32 && buffer[i+1]!=32 && j!=3)
+		k = 0;
+		if (buffer[i] == 32 && buffer[i + 1] != 32 && j != 3)
 		{
-			while(1)
+			while (1)
 			{
-				i+=1;
-				sbuffer[k]=buffer[i];
-				k+=1;
-				if (buffer[i+1]==32 || buffer[i+1]==93)
+				i += 1;
+				sbuffer[k] = buffer[i];
+				k += 1;
+				if (buffer[i + 1] == 32 || buffer[i + 1] == 93)
 				{
-					b[j]=atof(sbuffer);
-					j+=1;
+					b[j] = atof(sbuffer);
+					j += 1;
 					break;
 				}
 			}
 		}
 	}
+	//конец записи массива В
 
-	//проверка переменных
-	float aa[3][3];
-	float bb[3];
-	float cc[3];
-	for ( int l = 0 ; l < 3 ; l++)
-	{
-		for ( int k = 0 ; k < 3; k++)
-		{
-			aa[l][k]=a[l][k];
-		}
-	}
-	for ( int l = 0 ; l < 3 ; l++)
-	{
-		bb[l]=b[l];
-		cc[l]=c[l];
-	}
+	//запись начального массива
+	printf("Начальный массив\n");
+	printf("%f %f %f %f.\n", b[0], a[0][0], a[0][1], a[0][2]);
+	printf("%f %f %f %f.\n", b[1], a[1][0], a[1][1], a[1][2]);
+	printf("%f %f %f %f.\n", b[2], a[2][0], a[2][1], a[2][2]);
+	printf("%f %f %f %f.\n\n", d, c[0], c[1], c[2]);
+	//конец записи начального массива
 
-	print();
 	//математические рассчеты
-	optimal();
+	k=0;
+	int m = 0;
+	while (1)
+	{
+		float minc = 0;
+		for (i = 0; i < 3; i++)
+		{
+			if (c[i] <= 0 && c[i] <= minc)
+			{
+				minc = c[i];
+				m = i;
+			}
+		}
+		if (minc != 0)
+		{
+			i = m;
+			float min = 100;
+			for (int j = 0; j < 3; j++)
+			{
+				if (a[i][j] == 0)
+					continue;
+				if (b[i] / a[i][j] < min)
+				{
+					k = i;
+					min = b[i] / a[i][j];
+				}
+			}
+			printf("Разрешающий столбец %d. Разрешающая строка %d.\n", i, k);
 
-	getch();
+			//Замена
+			int buf = xj[k];
+			xj[k] = xi[i];
+			xi[i] = buf;
+
+			d = d - b[i] * c[k] / a[i][k];
+
+			for (int l = 0; l < 3; l++)
+			{
+				if (l == i)
+					continue;
+				else
+					b[l] = b[l] - a[l][k] * b[i] / a[i][k];
+
+			}
+			b[i] = b[i] / a[i][k];
+
+			for (int l = 0; l < 3; l++)
+			{
+				if (l == i)
+					continue;
+				else
+					c[l] = c[l] - a[i][l] * c[i] / a[i][k];
+			}
+			c[i] = -c[i] / a[i][k];
+
+			for (int l = 0; l < 3; l++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (l != i && j != k)
+						a[l][j] = a[l][j] - (a[l][k] * a[i][j] / a[i][k]);
+				}
+			}
+
+			for (int l = 0; l < 3; l++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (l == i && j != k)
+						a[l][j] = a[l][j] / a[i][k];
+				}
+			}
+
+			for (int l = 0; l < 3; l++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (l != i && j == k)
+						a[l][j] = -a[l][j] / a[i][k];
+				}
+			}
+
+			for (int l = 0; l < 3; l++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (l == i && j == k)
+						a[l][j] = 1 / a[i][k];
+				}
+			}
+			//конец замены
+
+			//запись измененного массива
+			printf("%9.5f %9.5f %9.5f %9.5f\n", b[0], a[0][0], a[0][1], a[0][2]);
+			printf("%9.5f %9.5f %9.5f %9.5f\n", b[1], a[1][0], a[1][1], a[1][2]);
+			printf("%9.5f %9.5f %9.5f %9.5f\n", b[2], a[2][0], a[2][1], a[2][2]);
+			printf("%9.5f %9.5f %9.5f %9.5f\n", d, c[0], c[1], c[2]);
+			//конец записи измененного массива
+		}
+		else
+			break;
+		k = 0;
+	}
+	//конец мат. рассчетов
+	_getch();
 }
